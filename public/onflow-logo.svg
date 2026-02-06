@@ -1,0 +1,20 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon -->
+  <rect x="8" y="8" width="44" height="44" rx="8" fill="url(#gradient)"/>
+  <path d="M18 30L26 38L42 22" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M26 38L26 42" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+  <path d="M22 41L26 42L30 41" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+
+  <!-- Text: Onflow -->
+  <text x="65" y="40" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="700" fill="#1e293b">
+    Onflow
+  </text>
+
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="gradient" x1="8" y1="8" x2="52" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+  </defs>
+</svg>
