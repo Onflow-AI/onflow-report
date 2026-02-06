@@ -15,7 +15,7 @@ export async function getReport(id: string): Promise<Report | null> {
   }
 
   const { data, error } = await supabase
-    .from('reports')
+    .from('onflow_reports')
     .select('*')
     .eq('id', id)
     .single();
@@ -25,22 +25,35 @@ export async function getReport(id: string): Promise<Report | null> {
     return null;
   }
 
+  // Map report_data.reports to personas field for compatibility
+  if (data && data.report_data && Array.isArray(data.report_data.reports)) {
+    data.personas = data.report_data.reports;
+  }
+
+  // If personas is still not set, initialize as empty array to prevent errors
+  if (!data.personas) {
+    data.personas = [];
+  }
+
   return data as Report;
 }
 
-export async function updateReportRating(id: string, rating: number): Promise<boolean> {
+export async function updateReportRating(reportId: string, rating: number): Promise<boolean> {
   if (!supabase) {
     console.error('Supabase client not initialized. Please check your environment variables.');
     return false;
   }
 
+  // Insert rating into the separate ratings table
   const { error } = await supabase
-    .from('reports')
-    .update({ rating })
-    .eq('id', id);
+    .from('onflow_report_ratings')
+    .insert({
+      report_id: reportId,
+      rating: rating,
+    });
 
   if (error) {
-    console.error('Error updating rating:', error);
+    console.error('Error inserting rating:', error);
     return false;
   }
 

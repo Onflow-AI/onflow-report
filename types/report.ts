@@ -22,7 +22,7 @@ export interface PersonaResult {
   success: boolean;
   friction_points: string[];
   positive_aspects: string[];
-  recommended_changes: string;
+  recommended_changes: string[] | string;
 }
 
 export interface PersonaReport {
@@ -31,13 +31,21 @@ export interface PersonaReport {
 }
 
 export interface ReportData {
-  metadata: ReportMetadata;
-  summary: ReportSummary;
-  reports: PersonaReport[];
+  url?: string;
+  metadata?: ReportMetadata;
+  summary?: ReportSummary;
+  reports?: PersonaReport[];
 }
 
 export interface Report {
   id: string;
   created_at: string;
-  result: ReportData;
+  generated_at: string;
+  url: string;
+  num_personas: number;
+  num_tests: number;
+  successful_tests: number;
+  failure_rate: string;
+  personas: PersonaReport[];
+  report_data: ReportData;
 }
