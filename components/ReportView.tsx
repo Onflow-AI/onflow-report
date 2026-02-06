@@ -1,16 +1,36 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Report } from '@/types/report';
 import { Globe, Users, CheckCircle2, XCircle, AlertTriangle, Target, Briefcase, Zap, TrendingUp, TrendingDown } from 'lucide-react';
 import FeedbackBar from './FeedbackBar';
+import UnlockModal from './UnlockModal';
+import BookDemoSection from './BookDemoSection';
 
 interface ReportViewProps {
   report: Report;
 }
 
 export default function ReportView({ report }: ReportViewProps) {
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
   const successRate = parseFloat(report.failure_rate);
   const isHighFailure = successRate > 50;
+
+  // Persist unlock state
+  useEffect(() => {
+    const unlocked = localStorage.getItem(`report-unlocked-${report.id}`);
+    if (unlocked === 'true') {
+      setIsUnlocked(true);
+    }
+  }, [report.id]);
+
+  const handleUnlock = () => {
+    setIsUnlocked(true);
+    setShowModal(false);
+    localStorage.setItem(`report-unlocked-${report.id}`, 'true');
+  };
 
   // Ensure personas is an array and has valid data
   const personas = (Array.isArray(report.personas) ? report.personas : [])
@@ -206,27 +226,25 @@ export default function ReportView({ report }: ReportViewProps) {
                     {personaReport.results.friction_points.map((point, idx) => (
                       <li
                         key={idx}
-                        className={`flex items-start gap-3 ${idx >= 2 ? 'blur-md' : ''}`}
-                        style={idx >= 2 ? { filter: 'blur(4px)' } : {}}
+                        className={`flex items-start gap-3 ${!isUnlocked && idx >= 2 ? 'blur-md' : ''}`}
+                        style={!isUnlocked && idx >= 2 ? { filter: 'blur(4px)' } : {}}
                       >
                         <XCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                         <span className="text-red-900 leading-relaxed">{point}</span>
                       </li>
                     ))}
                   </ul>
-                  {personaReport.results.friction_points.length > 2 && (
+                  {!isUnlocked && personaReport.results.friction_points.length > 2 && (
                     <>
                       <div className="absolute inset-0 bg-gradient-to-t from-red-50 via-red-50/50 to-transparent pointer-events-none" />
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <a
-                          href="https://runonflow.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button
+                          onClick={() => setShowModal(true)}
                           className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-base rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10"
                         >
                           <Zap className="h-5 w-5" />
                           Buy Full Report
-                        </a>
+                        </button>
                       </div>
                     </>
                   )}
@@ -248,27 +266,25 @@ export default function ReportView({ report }: ReportViewProps) {
                     {personaReport.results.positive_aspects.map((aspect, idx) => (
                       <li
                         key={idx}
-                        className={`flex items-start gap-3 ${idx >= 2 ? 'blur-md' : ''}`}
-                        style={idx >= 2 ? { filter: 'blur(4px)' } : {}}
+                        className={`flex items-start gap-3 ${!isUnlocked && idx >= 2 ? 'blur-md' : ''}`}
+                        style={!isUnlocked && idx >= 2 ? { filter: 'blur(4px)' } : {}}
                       >
                         <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
                         <span className="text-green-900 leading-relaxed">{aspect}</span>
                       </li>
                     ))}
                   </ul>
-                  {personaReport.results.positive_aspects.length > 2 && (
+                  {!isUnlocked && personaReport.results.positive_aspects.length > 2 && (
                     <>
                       <div className="absolute inset-0 bg-gradient-to-t from-green-50 via-green-50/50 to-transparent pointer-events-none" />
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <a
-                          href="https://runonflow.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button
+                          onClick={() => setShowModal(true)}
                           className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-base rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10"
                         >
                           <Zap className="h-5 w-5" />
                           Buy Full Report
-                        </a>
+                        </button>
                       </div>
                     </>
                   )}
@@ -296,8 +312,8 @@ export default function ReportView({ report }: ReportViewProps) {
                     ? personaReport.results.recommended_changes.map((change, idx) => (
                         <div
                           key={idx}
-                          className={`flex items-start gap-3 ${idx >= 2 ? 'blur-md' : ''}`}
-                          style={idx >= 2 ? { filter: 'blur(4px)' } : {}}
+                          className={`flex items-start gap-3 ${!isUnlocked && idx >= 2 ? 'blur-md' : ''}`}
+                          style={!isUnlocked && idx >= 2 ? { filter: 'blur(4px)' } : {}}
                         >
                           <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
                           <span className="flex-1">{change}</span>
@@ -314,8 +330,8 @@ export default function ReportView({ report }: ReportViewProps) {
                             return (
                               <p
                                 key={idx}
-                                className={`font-semibold text-amber-950 mt-4 first:mt-0 ${itemNumber >= 2 ? 'blur-md' : ''}`}
-                                style={itemNumber >= 2 ? { filter: 'blur(4px)' } : {}}
+                                className={`font-semibold text-amber-950 mt-4 first:mt-0 ${!isUnlocked && itemNumber >= 2 ? 'blur-md' : ''}`}
+                                style={!isUnlocked && itemNumber >= 2 ? { filter: 'blur(4px)' } : {}}
                               >
                                 {trimmedChange}
                               </p>
@@ -327,8 +343,8 @@ export default function ReportView({ report }: ReportViewProps) {
                           return (
                             <div
                               key={idx}
-                              className={`flex items-start gap-3 ${currentNumber > 2 ? 'blur-md' : ''}`}
-                              style={currentNumber > 2 ? { filter: 'blur(4px)' } : {}}
+                              className={`flex items-start gap-3 ${!isUnlocked && currentNumber > 2 ? 'blur-md' : ''}`}
+                              style={!isUnlocked && currentNumber > 2 ? { filter: 'blur(4px)' } : {}}
                             >
                               <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
                               <span className="flex-1">{trimmedChange}</span>
@@ -340,20 +356,18 @@ export default function ReportView({ report }: ReportViewProps) {
                 </div>
 
                 {/* Gradient overlay and CTA */}
-                {((Array.isArray(personaReport.results.recommended_changes) && personaReport.results.recommended_changes.length > 2) ||
+                {!isUnlocked && ((Array.isArray(personaReport.results.recommended_changes) && personaReport.results.recommended_changes.length > 2) ||
                   (!Array.isArray(personaReport.results.recommended_changes) && personaReport.results.recommended_changes.split(/(?:\d+\)|;)\s*/).filter(Boolean).length > 2)) && (
                   <>
                     <div className="absolute inset-0 bg-gradient-to-t from-orange-50 via-amber-50/50 to-transparent pointer-events-none" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <a
-                        href="https://runonflow.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={() => setShowModal(true)}
                         className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-lg rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-3 z-10"
                       >
                         <Zap className="h-6 w-6" />
-                        Buy Full Report Now
-                      </a>
+                        Buy Full Report
+                      </button>
                     </div>
                   </>
                 )}
@@ -364,6 +378,11 @@ export default function ReportView({ report }: ReportViewProps) {
       ))
       )}
 
+      {/* Book Demo CTA - shown only when unlocked */}
+      {isUnlocked && (
+        <BookDemoSection />
+      )}
+
       {/* Footer */}
       <div className="text-center text-slate-500 text-sm mt-8 mb-24">
         <p>Report ID: {report.id}</p>
@@ -372,6 +391,13 @@ export default function ReportView({ report }: ReportViewProps) {
 
       {/* Feedback Bar */}
       <FeedbackBar reportId={report.id} />
+
+      {/* Unlock Modal */}
+      <UnlockModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onUnlock={handleUnlock}
+      />
     </div>
   );
 }
