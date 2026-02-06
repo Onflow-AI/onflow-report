@@ -145,7 +145,9 @@ export default function ReportView({ report }: ReportViewProps) {
           </div>
         </div>
       ) : (
-        personas.map((personaReport, index) => (
+        personas.map((personaReport, index) => {
+          const shouldBlur = !isUnlocked && index >= 1;
+          return (
           <div key={index} className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-slate-200">
             {/* Persona Header */}
             <div className="mb-8">
@@ -178,8 +180,13 @@ export default function ReportView({ report }: ReportViewProps) {
                   )}
                 </div>
               </div>
+            </div>
 
-              <div className="space-y-3">
+            {/* Blurrable content wrapper */}
+            <div className="relative">
+              <div className={shouldBlur ? 'blur-sm pointer-events-none select-none' : ''}>
+
+              <div className="space-y-3 mb-8">
                 <div className="flex items-start gap-3 p-4 bg-indigo-50 rounded-lg">
                   <Zap className="h-5 w-5 text-indigo-600 mt-0.5 flex-shrink-0" />
                   <div>
@@ -208,94 +215,53 @@ export default function ReportView({ report }: ReportViewProps) {
                   </div>
                 </div>
               </div>
-            </div>
 
           {/* Results Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             {/* Friction Points */}
             {personaReport.results.friction_points?.length > 0 && (
-              <div className="bg-red-50 rounded-xl p-6 border-2 border-red-200 relative">
+              <div className="bg-red-50 rounded-xl p-6 border-2 border-red-200">
                 <div className="flex items-center gap-2 mb-4">
                   <XCircle className="h-6 w-6 text-red-600" />
                   <h3 className="text-xl font-bold text-red-900">
                     Friction Points ({personaReport.results.friction_points.length})
                   </h3>
                 </div>
-                <div className="relative">
-                  <ul className="space-y-3">
-                    {personaReport.results.friction_points.map((point, idx) => (
-                      <li
-                        key={idx}
-                        className={`flex items-start gap-3 ${!isUnlocked && idx >= 2 ? 'blur-md' : ''}`}
-                        style={!isUnlocked && idx >= 2 ? { filter: 'blur(4px)' } : {}}
-                      >
-                        <XCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-red-900 leading-relaxed">{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  {!isUnlocked && personaReport.results.friction_points.length > 2 && (
-                    <>
-                      <div className="absolute inset-0 bg-gradient-to-t from-red-50 via-red-50/50 to-transparent pointer-events-none" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <button
-                          onClick={() => setShowModal(true)}
-                          className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-base rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10"
-                        >
-                          <Zap className="h-5 w-5" />
-                          Buy Full Report
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
+                <ul className="space-y-3">
+                  {personaReport.results.friction_points.map((point, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <XCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                      <span className="text-red-900 leading-relaxed">{point}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
 
             {/* Positive Aspects */}
             {personaReport.results.positive_aspects?.length > 0 && (
-              <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200 relative">
+              <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
                 <div className="flex items-center gap-2 mb-4">
                   <CheckCircle2 className="h-6 w-6 text-green-600" />
                   <h3 className="text-xl font-bold text-green-900">
                     Positive Aspects ({personaReport.results.positive_aspects.length})
                   </h3>
                 </div>
-                <div className="relative">
-                  <ul className="space-y-3">
-                    {personaReport.results.positive_aspects.map((aspect, idx) => (
-                      <li
-                        key={idx}
-                        className={`flex items-start gap-3 ${!isUnlocked && idx >= 2 ? 'blur-md' : ''}`}
-                        style={!isUnlocked && idx >= 2 ? { filter: 'blur(4px)' } : {}}
-                      >
-                        <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-green-900 leading-relaxed">{aspect}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  {!isUnlocked && personaReport.results.positive_aspects.length > 2 && (
-                    <>
-                      <div className="absolute inset-0 bg-gradient-to-t from-green-50 via-green-50/50 to-transparent pointer-events-none" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <button
-                          onClick={() => setShowModal(true)}
-                          className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-base rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10"
-                        >
-                          <Zap className="h-5 w-5" />
-                          Buy Full Report
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
+                <ul className="space-y-3">
+                  {personaReport.results.positive_aspects.map((aspect, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <span className="text-green-900 leading-relaxed">{aspect}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
 
           {/* Recommended Changes */}
           {personaReport.results.recommended_changes && (
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border-2 border-amber-200 relative">
+            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border-2 border-amber-200">
               <div className="flex items-center gap-2 mb-4">
                 <AlertTriangle className="h-6 w-6 text-amber-600" />
                 <h3 className="text-xl font-bold text-amber-900">
@@ -306,76 +272,63 @@ export default function ReportView({ report }: ReportViewProps) {
                   })
                 </h3>
               </div>
-              <div className="relative">
-                <div className="text-amber-900 leading-relaxed space-y-3">
-                  {Array.isArray(personaReport.results.recommended_changes)
-                    ? personaReport.results.recommended_changes.map((change, idx) => (
-                        <div
-                          key={idx}
-                          className={`flex items-start gap-3 ${!isUnlocked && idx >= 2 ? 'blur-md' : ''}`}
-                          style={!isUnlocked && idx >= 2 ? { filter: 'blur(4px)' } : {}}
-                        >
-                          <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                          <span className="flex-1">{change}</span>
-                        </div>
-                      ))
-                    : (() => {
-                        let itemNumber = 0;
-                        return personaReport.results.recommended_changes.split(/(?:\d+\)|;)\s*/).filter(Boolean).map((change, idx) => {
-                          const trimmedChange = change.trim();
-                          if (!trimmedChange) return null;
+              <div className="text-amber-900 leading-relaxed space-y-3">
+                {Array.isArray(personaReport.results.recommended_changes)
+                  ? personaReport.results.recommended_changes.map((change, idx) => (
+                      <div key={idx} className="flex items-start gap-3">
+                        <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <span className="flex-1">{change}</span>
+                      </div>
+                    ))
+                  : (() => {
+                      let itemNumber = 0;
+                      return personaReport.results.recommended_changes.split(/(?:\d+\)|;)\s*/).filter(Boolean).map((change, idx) => {
+                        const trimmedChange = change.trim();
+                        if (!trimmedChange) return null;
 
-                          // Check if this is an introductory sentence (ends with colon)
-                          if (trimmedChange.endsWith(':')) {
-                            return (
-                              <p
-                                key={idx}
-                                className={`font-semibold text-amber-950 mt-4 first:mt-0 ${!isUnlocked && itemNumber >= 2 ? 'blur-md' : ''}`}
-                                style={!isUnlocked && itemNumber >= 2 ? { filter: 'blur(4px)' } : {}}
-                              >
-                                {trimmedChange}
-                              </p>
-                            );
-                          }
-
-                          itemNumber++;
-                          const currentNumber = itemNumber;
+                        if (trimmedChange.endsWith(':')) {
                           return (
-                            <div
-                              key={idx}
-                              className={`flex items-start gap-3 ${!isUnlocked && currentNumber > 2 ? 'blur-md' : ''}`}
-                              style={!isUnlocked && currentNumber > 2 ? { filter: 'blur(4px)' } : {}}
-                            >
-                              <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                              <span className="flex-1">{trimmedChange}</span>
-                            </div>
+                            <p key={idx} className="font-semibold text-amber-950 mt-4 first:mt-0">
+                              {trimmedChange}
+                            </p>
                           );
-                        });
-                      })()
-                  }
-                </div>
+                        }
 
-                {/* Gradient overlay and CTA */}
-                {!isUnlocked && ((Array.isArray(personaReport.results.recommended_changes) && personaReport.results.recommended_changes.length > 2) ||
-                  (!Array.isArray(personaReport.results.recommended_changes) && personaReport.results.recommended_changes.split(/(?:\d+\)|;)\s*/).filter(Boolean).length > 2)) && (
-                  <>
-                    <div className="absolute inset-0 bg-gradient-to-t from-orange-50 via-amber-50/50 to-transparent pointer-events-none" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <button
-                        onClick={() => setShowModal(true)}
-                        className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-lg rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-3 z-10"
-                      >
-                        <Zap className="h-6 w-6" />
-                        Buy Full Report
-                      </button>
-                    </div>
-                  </>
-                )}
+                        itemNumber++;
+                        return (
+                          <div key={idx} className="flex items-start gap-3">
+                            <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                            <span className="flex-1">{trimmedChange}</span>
+                          </div>
+                        );
+                      });
+                    })()
+                }
               </div>
             </div>
           )}
+
+              </div>{/* end blur inner div */}
+
+              {/* Gradient overlay and CTA for locked personas */}
+              {shouldBlur && (
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-white/40 pointer-events-none rounded-xl" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <button
+                      onClick={() => setShowModal(true)}
+                      className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-lg rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-3 z-10"
+                    >
+                      <Zap className="h-6 w-6" />
+                      Buy Full Report Now
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>{/* end relative wrapper */}
         </div>
-      ))
+      );
+      })
       )}
 
       {/* Book Demo CTA - shown only when unlocked */}
