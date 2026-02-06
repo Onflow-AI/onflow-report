@@ -194,43 +194,85 @@ export default function ReportView({ report }: ReportViewProps) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             {/* Friction Points */}
             {personaReport.results.friction_points?.length > 0 && (
-              <div className="bg-red-50 rounded-xl p-6 border-2 border-red-200">
+              <div className="bg-red-50 rounded-xl p-6 border-2 border-red-200 relative">
                 <div className="flex items-center gap-2 mb-4">
                   <XCircle className="h-6 w-6 text-red-600" />
                   <h3 className="text-xl font-bold text-red-900">
                     Friction Points ({personaReport.results.friction_points.length})
                   </h3>
                 </div>
-                <ul className="space-y-3">
-                  {personaReport.results.friction_points.map((point, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <span className="inline-block w-6 h-6 rounded-full bg-red-200 text-red-800 text-sm font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
-                        {idx + 1}
-                      </span>
-                      <span className="text-red-900 leading-relaxed">{point}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="relative">
+                  <ul className="space-y-3">
+                    {personaReport.results.friction_points.map((point, idx) => (
+                      <li
+                        key={idx}
+                        className={`flex items-start gap-3 ${idx >= 2 ? 'blur-md' : ''}`}
+                        style={idx >= 2 ? { filter: 'blur(4px)' } : {}}
+                      >
+                        <XCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-red-900 leading-relaxed">{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {personaReport.results.friction_points.length > 2 && (
+                    <>
+                      <div className="absolute inset-0 bg-gradient-to-t from-red-50 via-red-50/50 to-transparent pointer-events-none" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <a
+                          href="https://runonflow.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-base rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10"
+                        >
+                          <Zap className="h-5 w-5" />
+                          Buy Full Report
+                        </a>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             )}
 
             {/* Positive Aspects */}
             {personaReport.results.positive_aspects?.length > 0 && (
-              <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
+              <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200 relative">
                 <div className="flex items-center gap-2 mb-4">
                   <CheckCircle2 className="h-6 w-6 text-green-600" />
                   <h3 className="text-xl font-bold text-green-900">
                     Positive Aspects ({personaReport.results.positive_aspects.length})
                   </h3>
                 </div>
-                <ul className="space-y-3">
-                  {personaReport.results.positive_aspects.map((aspect, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-green-900 leading-relaxed">{aspect}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="relative">
+                  <ul className="space-y-3">
+                    {personaReport.results.positive_aspects.map((aspect, idx) => (
+                      <li
+                        key={idx}
+                        className={`flex items-start gap-3 ${idx >= 2 ? 'blur-md' : ''}`}
+                        style={idx >= 2 ? { filter: 'blur(4px)' } : {}}
+                      >
+                        <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-green-900 leading-relaxed">{aspect}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {personaReport.results.positive_aspects.length > 2 && (
+                    <>
+                      <div className="absolute inset-0 bg-gradient-to-t from-green-50 via-green-50/50 to-transparent pointer-events-none" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <a
+                          href="https://runonflow.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-base rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10"
+                        >
+                          <Zap className="h-5 w-5" />
+                          Buy Full Report
+                        </a>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -249,53 +291,72 @@ export default function ReportView({ report }: ReportViewProps) {
                 </h3>
               </div>
               <div className="relative">
-                <div className="text-amber-900 leading-relaxed space-y-3 max-h-64 overflow-hidden">
+                <div className="text-amber-900 leading-relaxed space-y-3">
                   {Array.isArray(personaReport.results.recommended_changes)
                     ? personaReport.results.recommended_changes.map((change, idx) => (
-                        <div key={idx} className="flex items-start gap-3">
-                          <span className="inline-block w-6 h-6 rounded-full bg-amber-200 text-amber-800 text-sm font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
-                            {idx + 1}
-                          </span>
+                        <div
+                          key={idx}
+                          className={`flex items-start gap-3 ${idx >= 2 ? 'blur-md' : ''}`}
+                          style={idx >= 2 ? { filter: 'blur(4px)' } : {}}
+                        >
+                          <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
                           <span className="flex-1">{change}</span>
                         </div>
                       ))
-                    : personaReport.results.recommended_changes.split(/(?:\d+\)|;)\s*/).filter(Boolean).map((change, idx) => {
-                        const trimmedChange = change.trim();
-                        if (!trimmedChange) return null;
+                    : (() => {
+                        let itemNumber = 0;
+                        return personaReport.results.recommended_changes.split(/(?:\d+\)|;)\s*/).filter(Boolean).map((change, idx) => {
+                          const trimmedChange = change.trim();
+                          if (!trimmedChange) return null;
 
-                        // Check if this is an introductory sentence (ends with colon)
-                        if (trimmedChange.endsWith(':')) {
+                          // Check if this is an introductory sentence (ends with colon)
+                          if (trimmedChange.endsWith(':')) {
+                            return (
+                              <p
+                                key={idx}
+                                className={`font-semibold text-amber-950 mt-4 first:mt-0 ${itemNumber >= 2 ? 'blur-md' : ''}`}
+                                style={itemNumber >= 2 ? { filter: 'blur(4px)' } : {}}
+                              >
+                                {trimmedChange}
+                              </p>
+                            );
+                          }
+
+                          itemNumber++;
+                          const currentNumber = itemNumber;
                           return (
-                            <p key={idx} className="font-semibold text-amber-950 mt-4 first:mt-0">
-                              {trimmedChange}
-                            </p>
+                            <div
+                              key={idx}
+                              className={`flex items-start gap-3 ${currentNumber > 2 ? 'blur-md' : ''}`}
+                              style={currentNumber > 2 ? { filter: 'blur(4px)' } : {}}
+                            >
+                              <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                              <span className="flex-1">{trimmedChange}</span>
+                            </div>
                           );
-                        }
-
-                        return (
-                          <div key={idx} className="flex items-start gap-3">
-                            <span className="inline-block w-6 h-6 rounded-full bg-amber-200 text-amber-800 text-sm font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
-                              {idx}
-                            </span>
-                            <span className="flex-1">{trimmedChange}</span>
-                          </div>
-                        );
-                      })
+                        });
+                      })()
                   }
                 </div>
 
-                {/* Blur overlay and CTA */}
-                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-amber-50 via-amber-50/95 to-transparent backdrop-blur-sm flex items-end justify-center pb-4">
-                  <a
-                    href="https://runonflow.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-lg rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-3"
-                  >
-                    <Zap className="h-6 w-6" />
-                    Buy Full Report Now
-                  </a>
-                </div>
+                {/* Gradient overlay and CTA */}
+                {((Array.isArray(personaReport.results.recommended_changes) && personaReport.results.recommended_changes.length > 2) ||
+                  (!Array.isArray(personaReport.results.recommended_changes) && personaReport.results.recommended_changes.split(/(?:\d+\)|;)\s*/).filter(Boolean).length > 2)) && (
+                  <>
+                    <div className="absolute inset-0 bg-gradient-to-t from-orange-50 via-amber-50/50 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <a
+                        href="https://runonflow.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-lg rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-3 z-10"
+                      >
+                        <Zap className="h-6 w-6" />
+                        Buy Full Report Now
+                      </a>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           )}
