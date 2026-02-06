@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Report } from '@/types/report';
-import { Globe, Users, CheckCircle2, XCircle, AlertTriangle, Target, Briefcase, Zap, TrendingUp, TrendingDown } from 'lucide-react';
+import { Globe, Users, CheckCircle2, XCircle, AlertTriangle, Target, Briefcase, Zap, TrendingUp } from 'lucide-react';
 import FeedbackBar from './FeedbackBar';
 import UnlockModal from './UnlockModal';
 import { trackReportClick } from '@/lib/supabase';
@@ -15,9 +15,6 @@ interface ReportViewProps {
 export default function ReportView({ report }: ReportViewProps) {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
-  const successRate = parseFloat(report.failure_rate);
-  const isHighFailure = successRate > 50;
 
   // Persist unlock state
   useEffect(() => {
@@ -87,52 +84,6 @@ export default function ReportView({ report }: ReportViewProps) {
         </div>
       </div>
 
-      {/* Summary Section */}
-      <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-slate-200">
-        <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-          <TrendingUp className="h-7 w-7 text-blue-600" />
-          Test Summary
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="relative overflow-hidden p-6 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200">
-            <CheckCircle2 className="h-12 w-12 text-green-600 mb-3" />
-            <p className="text-sm text-green-700 font-semibold mb-1">Successful Tests</p>
-            <p className="text-4xl font-bold text-green-900">{report.successful_tests}</p>
-          </div>
-
-          <div className={`relative overflow-hidden p-6 rounded-xl border-2 ${
-            isHighFailure
-              ? 'bg-gradient-to-br from-red-50 to-rose-50 border-red-200'
-              : 'bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-200'
-          }`}>
-            {isHighFailure ? (
-              <XCircle className="h-12 w-12 text-red-600 mb-3" />
-            ) : (
-              <AlertTriangle className="h-12 w-12 text-yellow-600 mb-3" />
-            )}
-            <p className={`text-sm font-semibold mb-1 ${
-              isHighFailure ? 'text-red-700' : 'text-yellow-700'
-            }`}>
-              Failure Rate
-            </p>
-            <p className={`text-4xl font-bold ${
-              isHighFailure ? 'text-red-900' : 'text-yellow-900'
-            }`}>
-              {report.failure_rate}
-            </p>
-          </div>
-
-          <div className="relative overflow-hidden p-6 rounded-xl bg-gradient-to-br from-slate-50 to-gray-50 border-2 border-slate-200">
-            <TrendingDown className="h-12 w-12 text-slate-600 mb-3" />
-            <p className="text-sm text-slate-700 font-semibold mb-1">Failed Tests</p>
-            <p className="text-4xl font-bold text-slate-900">
-              {report.num_tests - report.successful_tests}
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Persona Reports */}
       {personas.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-slate-200">
@@ -152,8 +103,7 @@ export default function ReportView({ report }: ReportViewProps) {
           <div key={index} className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-slate-200">
             {/* Persona Header */}
             <div className="mb-8">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
+              <div className="mb-4">
                   <h2 className="text-3xl font-bold text-slate-900 mb-2">
                     {personaReport.persona.name || 'Unknown Persona'}
                   </h2>
@@ -161,25 +111,6 @@ export default function ReportView({ report }: ReportViewProps) {
                     <Briefcase className="h-5 w-5" />
                     <p className="text-lg font-medium">{personaReport.persona.job_title || 'N/A'}</p>
                   </div>
-                </div>
-
-                <div className={`px-6 py-3 rounded-xl font-bold text-lg ${
-                  personaReport.results.success
-                    ? 'bg-green-100 text-green-800 border-2 border-green-300'
-                    : 'bg-red-100 text-red-800 border-2 border-red-300'
-                }`}>
-                  {personaReport.results.success ? (
-                    <span className="flex items-center gap-2">
-                      <CheckCircle2 className="h-6 w-6" />
-                      Success
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <XCircle className="h-6 w-6" />
-                      Failed
-                    </span>
-                  )}
-                </div>
               </div>
             </div>
 
