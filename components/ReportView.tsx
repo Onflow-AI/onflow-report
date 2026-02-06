@@ -5,6 +5,7 @@ import { Report } from '@/types/report';
 import { Globe, Users, CheckCircle2, XCircle, AlertTriangle, Target, Briefcase, Zap, TrendingUp, TrendingDown } from 'lucide-react';
 import FeedbackBar from './FeedbackBar';
 import UnlockModal from './UnlockModal';
+import { trackReportClick } from '@/lib/supabase';
 import BookDemoSection from './BookDemoSection';
 
 interface ReportViewProps {
@@ -316,7 +317,10 @@ export default function ReportView({ report }: ReportViewProps) {
                   <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-white/40 pointer-events-none rounded-xl" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <button
-                      onClick={() => setShowModal(true)}
+                      onClick={async () => {
+                        await trackReportClick(report.id);
+                        setShowModal(true);
+                      }}
                       className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-lg rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-3 z-10"
                     >
                       <Zap className="h-6 w-6" />

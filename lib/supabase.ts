@@ -59,3 +59,21 @@ export async function updateReportRating(reportId: string, rating: number): Prom
 
   return true;
 }
+
+export async function trackReportClick(reportId: string): Promise<boolean> {
+  if (!supabase) {
+    console.error('Supabase client not initialized. Please check your environment variables.');
+    return false;
+  }
+
+  const { error } = await supabase
+    .from('onflow_report_clicks')
+    .insert({ report_id: reportId });
+
+  if (error) {
+    console.error('Error tracking report click:', error);
+    return false;
+  }
+
+  return true;
+}
