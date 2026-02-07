@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS public.onflow_report_ratings (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   report_id uuid NOT NULL,
   rating integer NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  feedback_text text DEFAULT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
   CONSTRAINT onflow_report_ratings_pkey PRIMARY KEY (id),
   CONSTRAINT onflow_report_ratings_report_id_fkey FOREIGN KEY (report_id)
@@ -51,4 +52,5 @@ COMMENT ON TABLE public.onflow_report_ratings IS 'Stores user ratings for UX tes
 COMMENT ON COLUMN public.onflow_report_ratings.id IS 'Unique identifier for the rating';
 COMMENT ON COLUMN public.onflow_report_ratings.report_id IS 'Foreign key reference to the report being rated';
 COMMENT ON COLUMN public.onflow_report_ratings.rating IS 'User rating score (1-5 stars)';
+COMMENT ON COLUMN public.onflow_report_ratings.feedback_text IS 'Optional free-text feedback provided alongside the star rating';
 COMMENT ON COLUMN public.onflow_report_ratings.created_at IS 'Timestamp when the rating was submitted';

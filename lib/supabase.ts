@@ -38,19 +38,28 @@ export async function getReport(id: string): Promise<Report | null> {
   return data as Report;
 }
 
-export async function updateReportRating(reportId: string, rating: number): Promise<boolean> {
+export async function updateReportRating(
+  reportId: string,
+  rating: number,
+  feedbackText?: string
+): Promise<boolean> {
   if (!supabase) {
     console.error('Supabase client not initialized. Please check your environment variables.');
     return false;
   }
 
-  // Insert rating into the separate ratings table
+  const insertData: { report_id: string; rating: number; feedback_text?: string } = {
+    report_id: reportId,
+    rating: rating,
+  };
+
+  if (feedbackText && feedbackText.trim().length > 0) {
+    insertData.feedback_text = feedbackText.trim();
+  }
+
   const { error } = await supabase
     .from('onflow_report_ratings')
-    .insert({
-      report_id: reportId,
-      rating: rating,
-    });
+    .insert(insertData);
 
   if (error) {
     console.error('Error inserting rating:', error);

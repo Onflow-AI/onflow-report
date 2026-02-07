@@ -11,21 +11,33 @@ interface FeedbackBarProps {
 export default function FeedbackBar({ reportId }: FeedbackBarProps) {
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
-  const handleRatingClick = async (rating: number) => {
-    if (isSubmitting || selectedRating) return;
-
+  const handleRatingClick = (rating: number) => {
+    if (isSubmitting || isSubmitted) return;
     setSelectedRating(rating);
+    setShowFeedbackForm(true);
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedRating || isSubmitting) return;
+
     setIsSubmitting(true);
 
-    const success = await updateReportRating(reportId, rating);
+    const success = await updateReportRating(
+      reportId,
+      selectedRating,
+      feedbackText || undefined
+    );
 
     setIsSubmitting(false);
 
     if (success) {
-      // Hide the bar after 2 seconds
+      setIsSubmitted(true);
       setTimeout(() => {
         setIsVisible(false);
       }, 2000);
@@ -41,7 +53,7 @@ export default function FeedbackBar({ reportId }: FeedbackBarProps) {
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-col md:flex-row items-center justify-center gap-4">
           <p className="text-white font-semibold text-lg text-center md:text-left">
-            Did you learn something new about your product which you didn't consider?
+            Did you learn something new about your product which you didn&apos;t consider?
           </p>
 
           <div className="flex items-center gap-2">
@@ -49,14 +61,14 @@ export default function FeedbackBar({ reportId }: FeedbackBarProps) {
               <button
                 key={rating}
                 onClick={() => handleRatingClick(rating)}
-                onMouseEnter={() => !selectedRating && setHoveredRating(rating)}
+                onMouseEnter={() => !isSubmitted && setHoveredRating(rating)}
                 onMouseLeave={() => setHoveredRating(null)}
-                disabled={isSubmitting || selectedRating !== null}
+                disabled={isSubmitting || isSubmitted}
                 className={`group relative transition-all duration-200 ${
                   displayRating && rating <= displayRating
                     ? 'scale-110'
                     : ''
-                } ${!selectedRating ? 'hover:scale-110' : ''} disabled:cursor-not-allowed`}
+                } ${!isSubmitted ? 'hover:scale-110' : ''} disabled:cursor-not-allowed`}
                 aria-label={`Rate ${rating} out of 5`}
               >
                 <Star
@@ -73,12 +85,32 @@ export default function FeedbackBar({ reportId }: FeedbackBarProps) {
             ))}
           </div>
 
-          {selectedRating && (
+          {isSubmitted && (
             <p className="text-white font-semibold animate-fade-in">
               Thanks for your feedback!
             </p>
           )}
         </div>
+
+        {showFeedbackForm && !isSubmitted && (
+          <div className="mt-4 flex flex-col md:flex-row items-stretch md:items-end gap-3 max-w-2xl mx-auto animate-fade-in">
+            <textarea
+              value={feedbackText}
+              onChange={(e) => setFeedbackText(e.target.value)}
+              placeholder="Tell us more about your experience... (optional)"
+              rows={2}
+              maxLength={1000}
+              className="flex-1 px-4 py-3 rounded-xl border-2 border-white/30 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:border-white/60 focus:bg-white/20 resize-none transition-all duration-200"
+            />
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="px-6 py-3 bg-white text-blue-600 font-bold rounded-xl hover:bg-white/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shrink-0"
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
